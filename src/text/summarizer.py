@@ -38,7 +38,7 @@ class Summarizer:
 
         return _tagged_filter(_stem_filter(text)) if stem else _tagged_filter(text)
 
-    def get_keywords(self, text: str) -> dict:
+    def get_keywords(self, text: str):
         raise NotImplementedError
 
 class CaptionSummarizer(Summarizer):
