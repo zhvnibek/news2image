@@ -35,4 +35,4 @@ if __name__ == '__main__':
     image_encoder = ImageEncoder(space=space)
     generate_subspaces_from_images(images_folder = google_open_images_folder)
 
-    # text_encoder = TextEncoder(summarizer=news_summarizer, space=space)
+    # text_encoder = TextEncoder(space=space)
