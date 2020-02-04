@@ -1,5 +1,5 @@
 # news2meme - An Automated Image Generator from News
-
+![text](src/text_trans.png?raw=true "Main")
 ### Import modules
 ```
 import os
