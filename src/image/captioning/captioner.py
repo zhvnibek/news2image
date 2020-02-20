@@ -2,10 +2,11 @@
     'Show, Attend, and Tell' Implementation in PyTorch from
     https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning
 """
-from image.captioning import ic_model
+from src.image.captioning import ic_model
 import torch
 import json
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
@@ -25,9 +26,21 @@ class Captioner:
         captions = []
         # Encode, decode with attention and beam search
         for i in range(1, n_captions + 1):
-            seq, alphas = ic_model.caption_image_beam_search(self.encoder, self.decoder, image_filename, self.word_map, i)
+            seq, alphas = ic_model.caption_image_beam_search(self.encoder, self.decoder, image_filename, self.word_map,
+                                                             i)
             alphas = torch.FloatTensor(alphas)
 
             captions.append(ic_model.return_sentence(image_filename, seq, alphas, self.rev_word_map))
 
         return captions
+
+
+if __name__ == '__main__':
+    from src.config import CaptionerConfig
+
+    captioner = Captioner(checkpoint_path=CaptionerConfig.checkpoint_path,
+                          word_map_path=CaptionerConfig.word_map_path,
+                          device=CaptionerConfig.device)
+    t_img = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/images/goi5k/90039842_39c6ae676a_o.jpg"
+    captions: list = captioner.generate_captions(image_filename=t_img)
+    print(captions)
