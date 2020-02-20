@@ -2,7 +2,6 @@ import numpy as np
 import networkx as nx
 from nltk import pos_tag
 from nltk.cluster.util import cosine_distance
-from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize, sent_tokenize, wordpunct_tokenize
 from collections import Counter
@@ -10,17 +9,18 @@ from collections import Counter
 
 class Summarizer:
 
-    def __init__(self, stop_words: set = set()):
+    def __init__(self, stopwords=None):
+        if stopwords is None:
+            stopwords = set()
         self.lemmatizer = WordNetLemmatizer()
-        self.stop_words: set = stop_words
+        self.stopwords: set = stopwords
 
     def word_counts(self, text: str) -> Counter:
-
         return Counter(
             [
                 self.lemmatizer.lemmatize(token.lower(), pos='v')
-                    for token in wordpunct_tokenize(text)
-                    if token.isalpha() and token not in self.stop_words
+                for token in wordpunct_tokenize(text)
+                if token.isalpha() and token not in self.stopwords
             ]
         )
 
@@ -31,7 +31,7 @@ class Summarizer:
 
         def _tagged_filter(text: str) -> set:
             selected = ['CD', 'FW', 'JJ', 'NN', 'NNP', 'NNS', 'NNPS', 'VBG', 'VBZ', 'VBP']
-            tokens = [t.lower() for t in word_tokenize(text) if t.isalpha() and t not in self.stop_words]
+            tokens = [t.lower() for t in word_tokenize(text) if t.isalpha() and t not in self.stopwords]
             tagged_text = pos_tag(tokens)
             joined = " ".join([word[0] for word in tagged_text if word[1] in selected])
             return set([word[0] for word in tagged_text if word[1] in selected])
@@ -41,22 +41,24 @@ class Summarizer:
     def get_keywords(self, text: str):
         raise NotImplementedError
 
+
 class CaptionSummarizer(Summarizer):
 
-    def __init__(self, stop_words):
-        super().__init__(stop_words=stop_words)
+    def __init__(self, stopwords):
+        super().__init__(stopwords=stopwords)
 
     def get_keywords(self, text: str) -> set:
         """Returns keywords with weights"""
-        keywords: set = self._filter_text(text)
+        _keywords: set = self._filter_text(text)
         # counter: Counter = self.word_counts(text)
         # return Counter({k: counter[k] for k in keywords})
-        return keywords
+        return _keywords
+
 
 class NewsSummarizer(Summarizer):
 
-    def __init__(self, stop_words):
-        super().__init__(stop_words=stop_words)
+    def __init__(self, stopwords):
+        super().__init__(stopwords=stopwords)
 
     def _sentence_similarity(self, first: str, second: str) -> float:
         words1 = word_tokenize(first)
@@ -66,12 +68,12 @@ class NewsSummarizer(Summarizer):
         vector2 = [0] * len(all_words)
 
         for w in words1:
-            if w in self.stop_words:
+            if w in self.stopwords:
                 continue
             vector1[all_words.index(w)] += 1
 
         for w in words2:
-            if w in self.stop_words:
+            if w in self.stopwords:
                 continue
             vector2[all_words.index(w)] += 1
 
@@ -82,7 +84,7 @@ class NewsSummarizer(Summarizer):
 
         for idx1 in range(len(sentences)):
             for idx2 in range(len(sentences)):
-                if idx1 == idx2: # ignore if both are same sentences
+                if idx1 == idx2:  # ignore if both are same sentences
                     continue
                 SSM[idx1][idx2] = self._sentence_similarity(sentences[idx1], sentences[idx2])
 
@@ -91,7 +93,7 @@ class NewsSummarizer(Summarizer):
 
         return SSM
 
-    def _generate_summary(self, text: str, top: int=1) -> str:
+    def _generate_summary(self, text: str, top: int = 1) -> str:
         sentences: list = sent_tokenize(text)
         top = min(top, len(sentences))
 
@@ -102,21 +104,20 @@ class NewsSummarizer(Summarizer):
 
         return " ".join([ranked_sentences[i][1] for i in range(top)])
 
-    def get_keywords(self, text: str, top: int=1) -> Counter:
+    def get_keywords(self, text: str, top: int = 1) -> Counter:
         """Get keywords with weights"""
-        summary: str = self._generate_summary(text, top)
-        keywords: set = self._filter_text(summary)
+        _summary: str = self._generate_summary(text, top)
+        _keywords: set = self._filter_text(_summary)
         counter: Counter = self.word_counts(text)
-        return Counter({k: counter[k] for k in keywords})
+        return Counter({k: counter[k] for k in _keywords})
 
-if __name__=='__main__':
-    with open("stopwords.txt", 'r') as f:
-        stop_extra = f.read().split('\n')
-    stop_words = set(stopwords.words('english'))
-    stop_words |= set(stop_extra)
+
+if __name__ == '__main__':
+    from src.config import StopWordsConfig
+    _stopwords = StopWordsConfig.get_stopwords()
 
     full_text = \
-    "Shocking CCTV footage released by Manchester police shows \
+        "Shocking CCTV footage released by Manchester police shows \
     the moment the man wielding a large-bladed knife is tackled \
     to the ground by armed officers. \
     At about 11 pm on Tuesday, CCTV operators spotted a man \
@@ -127,7 +128,7 @@ if __name__=='__main__':
     the knife around. \
     A 55-year-old man has been arrested on \
     suspicion of affray and remains in police custody for questioning."
-    ns = NewsSummarizer(stop_words=stop_words)
+    ns = NewsSummarizer(stopwords=_stopwords)
     top_sents = 1
     keywords = set()
     while not keywords:
@@ -135,8 +136,8 @@ if __name__=='__main__':
         keywords: set = set(keywords_weighed.keys())
         top_sents += 1
 
-    # cs = CaptionSummarizer(stop_words=stop_words)
-    # caption = 'a close up of a broccoli head on a table table'
-    # keywords_weighed = cs.get_keywords(text=caption)
+    cs = CaptionSummarizer(stopwords=_stopwords)
+    caption = 'a close up of a broccoli head on a table table'
+    keywords_weighed = cs.get_keywords(text=caption)
     print("Keywords: {}".format(keywords))
     print(keywords_weighed)
