@@ -11,15 +11,20 @@ from config import w2v_file, vocab_limit
 from config import google_open_images_folder
 from config import get_logger
 
-sys.path.append(os.path.join(sys.path[0],'image','captioning')) # add models.py
+sys.path.append(os.path.join(sys.path[0], 'image', 'captioning'))  # add models.py
 
 logger = get_logger('generate_subspaces')
 
 """ Generate word subspaces from text """
+
+
 def generate_subspaces_from_text():
     pass
 
+
 """ Generate word subspaces from images """
+
+
 def generate_subspaces_from_images(images_folder: str):
     for i in os.listdir(images_folder):
         image_filename = os.path.join(images_folder, i)
@@ -29,10 +34,11 @@ def generate_subspaces_from_images(images_folder: str):
         np.save(subspace_location, word_subspace)
         break
 
+
 if __name__ == '__main__':
     keyed_vectors = KeyedVectors.load_word2vec_format(w2v_file, limit=vocab_limit, binary=True)
     space = Space(keyed_vectors)
     image_encoder = ImageEncoder(space=space)
-    generate_subspaces_from_images(images_folder = google_open_images_folder)
+    generate_subspaces_from_images(images_folder=google_open_images_folder)
 
     # text_encoder = TextEncoder(space=space)

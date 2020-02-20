@@ -1,12 +1,8 @@
+from src.common.space import Space
 
 
 class BasicEncoder:
 
-    def __init__(self):
-        raise NotImplmentedError
+    def __init__(self, space: Space):
+        self.space = space
 
-    def create_subspace(self):
-        raise NotImplmentedError
-
-    def __str__(self) -> str:
-        raise NotImplmentedError
