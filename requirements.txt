@@ -45,3 +45,4 @@ thinc==7.1.1
 torch==1.2.0+cpu
 torchvision==0.4.0+cpu
 tqdm==4.32.1
+typing_extensions
