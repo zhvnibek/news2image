@@ -5,13 +5,14 @@ from nltk.cluster.util import cosine_distance
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize, sent_tokenize, wordpunct_tokenize
 from collections import Counter
+from src.config import StopWordsConfig
 
 
 class Summarizer:
 
     def __init__(self, stopwords=None):
         if stopwords is None:
-            stopwords = set()
+            stopwords = StopWordsConfig.get_stopwords()
         self.lemmatizer = WordNetLemmatizer()
         self.stopwords: set = stopwords
 
@@ -44,7 +45,7 @@ class Summarizer:
 
 class CaptionSummarizer(Summarizer):
 
-    def __init__(self, stopwords):
+    def __init__(self, stopwords=None):
         super().__init__(stopwords=stopwords)
 
     def get_keywords(self, text: str) -> set:
@@ -57,7 +58,7 @@ class CaptionSummarizer(Summarizer):
 
 class NewsSummarizer(Summarizer):
 
-    def __init__(self, stopwords):
+    def __init__(self, stopwords=None):
         super().__init__(stopwords=stopwords)
 
     def _sentence_similarity(self, first: str, second: str) -> float:
@@ -93,29 +94,29 @@ class NewsSummarizer(Summarizer):
 
         return SSM
 
-    def _generate_summary(self, text: str, top: int = 1) -> str:
+    def generate_summary(self, text: str, sentence_limit: int = 1) -> str:
         sentences: list = sent_tokenize(text)
-        top = min(top, len(sentences))
+        sentence_limit = min(sentence_limit, len(sentences))
 
         SSM = self._build_ssm(sentences)
         SSG = nx.from_numpy_array(SSM)
         scores = nx.pagerank(SSG)
         ranked_sentences = sorted(((scores[i], s) for i, s in enumerate(sentences)), reverse=True)
 
-        return " ".join([ranked_sentences[i][1] for i in range(top)])
+        return " ".join([ranked_sentences[i][1] for i in range(sentence_limit)])
 
-    def get_keywords(self, text: str, top: int = 1) -> Counter:
+    def get_keywords(self, text: str, sentence_limit: int = 1, keyword_limit: int = 5) -> Counter:
         """Get keywords with weights"""
-        _summary: str = self._generate_summary(text, top)
+        _summary: str = self.generate_summary(text, sentence_limit)
         _keywords: set = self._filter_text(_summary)
         counter: Counter = self.word_counts(text)
-        return Counter({k: counter[k] for k in _keywords})
+        print(f'summarizer. words count for all tokens:  {counter}')
+        whole_counter = Counter({k: counter[k] for k in _keywords})
+        print(f'summarizer. words count for keywords:  {whole_counter}')
+        return Counter(dict(whole_counter.most_common(keyword_limit)))
 
 
 if __name__ == '__main__':
-    from src.config import StopWordsConfig
-    _stopwords = StopWordsConfig.get_stopwords()
-
     full_text = \
         "Shocking CCTV footage released by Manchester police shows \
     the moment the man wielding a large-bladed knife is tackled \
@@ -128,16 +129,16 @@ if __name__ == '__main__':
     the knife around. \
     A 55-year-old man has been arrested on \
     suspicion of affray and remains in police custody for questioning."
-    ns = NewsSummarizer(stopwords=_stopwords)
+    ns = NewsSummarizer()
     top_sents = 1
     keywords = set()
     while not keywords:
-        keywords_weighed: Counter = ns.get_keywords(full_text, top=top_sents)
+        keywords_weighed: Counter = ns.get_keywords(text=full_text, sentence_limit=top_sents)
         keywords: set = set(keywords_weighed.keys())
         top_sents += 1
 
-    cs = CaptionSummarizer(stopwords=_stopwords)
-    caption = 'a close up of a broccoli head on a table table'
-    keywords_weighed = cs.get_keywords(text=caption)
+    cs = CaptionSummarizer()
+    # caption = 'a close up of a broccoli head on a table table'
+    # keywords_weighed = cs.get_keywords(text=caption)
     print("Keywords: {}".format(keywords))
     print(keywords_weighed)

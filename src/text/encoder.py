@@ -17,13 +17,14 @@ class TextEncoder(BasicEncoder):
         if keywords:
             return self.space.create_subspace(keywords=keywords, dim=dim)
 
-    def _get_keywords(self, text: str, limit: int = 7) -> Counter:
-        top_sents = 1
+    def _get_keywords(self, text: str, limit: int = 5) -> Counter:
+        sentence_limit = 1
         keywords = Counter()
         while not keywords:
-            keywords: Counter = self.summarizer.get_keywords(text=text, top=top_sents)
-            top_sents += 1
-        return Counter(dict(keywords.most_common(limit)))
+            keywords: Counter = self.summarizer.get_keywords(text=text, sentence_limit=sentence_limit, keyword_limit=limit)
+            sentence_limit += 1
+        print(f'Encoder. Keywords: {keywords}')
+        return keywords
 
 
 if __name__ == '__main__':
