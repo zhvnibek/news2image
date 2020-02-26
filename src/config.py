@@ -1,3 +1,4 @@
+import os
 import logging
 import torch
 from nltk.corpus import stopwords
@@ -20,6 +21,23 @@ class StopWordsConfig:
                 _extra = f.read().split('\n')
             StopWordsConfig._stopwords |= set(_extra)
         return StopWordsConfig._stopwords
+
+
+class TextConfig:
+    _texts_folder = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/texts"
+    _texts_subspaces_folder = None
+
+    @staticmethod
+    def get_texts_folder() -> str:
+        return TextConfig._texts_folder
+
+    @staticmethod
+    def get_text_category_folder(category: str = 'news') -> str:
+        return os.path.join(TextConfig._texts_folder, category)
+
+    @staticmethod
+    def get_text_subspaces_folder() -> str:
+        return TextConfig._texts_subspaces_folder
 
 
 class ImageConfig:

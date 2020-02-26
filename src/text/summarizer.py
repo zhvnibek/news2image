@@ -110,9 +110,9 @@ class NewsSummarizer(Summarizer):
         _summary: str = self.generate_summary(text, sentence_limit)
         _keywords: set = self._filter_text(_summary)
         counter: Counter = self.word_counts(text)
-        print(f'summarizer. words count for all tokens:  {counter}')
+        # print(f'summarizer. words count for all tokens:  {counter}')
         whole_counter = Counter({k: counter[k] for k in _keywords})
-        print(f'summarizer. words count for keywords:  {whole_counter}')
+        # print(f'summarizer. words count for keywords:  {whole_counter}')
         return Counter(dict(whole_counter.most_common(keyword_limit)))
 
 

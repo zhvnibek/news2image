@@ -1,6 +1,6 @@
-# news2meme - An Automated Image Generator from News
-![text](src/text_trans.png?raw=true "Text2Subspace")
-![text](src/image_trans.png?raw=true "Image2Subspace")
+# news2image - An Automated Image Generator from News
+![text](img/text_trans.png?raw=true "Text2Subspace")
+![text](img/image_trans.png?raw=true "Image2Subspace")
 
 ## Authors
 * **Zhanibek Darimbekov** - *Computer Science, Nazarbayev University* - [GitHub](https://github.com/zhvnibek)

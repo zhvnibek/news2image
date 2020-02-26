@@ -23,7 +23,7 @@ class TextEncoder(BasicEncoder):
         while not keywords:
             keywords: Counter = self.summarizer.get_keywords(text=text, sentence_limit=sentence_limit, keyword_limit=limit)
             sentence_limit += 1
-        print(f'Encoder. Keywords: {keywords}')
+        # print(f'Encoder. Keywords: {keywords}')
         return keywords
 
 
