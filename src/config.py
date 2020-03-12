@@ -61,7 +61,7 @@ class CaptionerConfig:
 
 class Word2VecConfig:
     _w2v_file = '~/Downloads/GoogleNews-vectors-negative300.bin.gz'
-    _vocab_size = 100000
+    _vocab_size = 200000
     _vocab_max_size = 3000000
 
     @staticmethod

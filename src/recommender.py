@@ -26,7 +26,6 @@ class Recommender:
 
     def compute_similarities(self, text: str) -> list:
         sub_txt = self.text_encoder.create_subspace(text=text)
-        logger.info(sub_txt.shape)
         sims = []
         if self._image_subspaces_loc is not None:
             for im in os.listdir(self._image_subspaces_loc):
@@ -46,17 +45,6 @@ if __name__ == '__main__':
     t_space = Space(t_keyed_vectors)
     t_recommender = Recommender(space=t_space)
     t_recommender.set_image_subspaces(path=ImageConfig.get_image_subspaces_folder())
-    t_text = \
-        "Shocking CCTV footage released by Manchester police shows \
-        the moment the man wielding a large-bladed knife is tackled \
-        to the ground by armed officers. \
-        At about 11 pm on Tuesday, CCTV operators spotted a man \
-        waving the butcher’s knife around the Piccadilly Garden’s \
-        area of Manchester and informed the police. \
-        The man can be seen struggling to stand and interacts with \
-        terrified members of the public, as he continues to wave \
-        the knife around. \
-        A 55-year-old man has been arrested on \
-        suspicion of affray and remains in police custody for questioning."
-    preds: list = t_recommender.predict(text=t_text)
+    t_text = "A recently published study analysed concentrations of fine particulate matter pollution across the continental US from 1999 until 2015. Industry, power plants and cars produce these extremely small particles of pollution. They are 30 times smaller than the width of a human hair, and they can be inhaled deep into the lungs, which can lead to a variety of health problems. The study found that this type of pollution declined since 1999, but the researchers say that even at levels below the current standard, air pollution linked to an estimated 30,000 deaths. One of the study’s lead authors said that lowering the standard below the current level would likely improve people’s health."
+    preds: list = t_recommender.predict(text=t_text, count=10)
     logger.info(preds)
