@@ -34,7 +34,7 @@ class Summarizer:
             selected = ['CD', 'FW', 'JJ', 'NN', 'NNP', 'NNS', 'NNPS', 'VBG', 'VBZ', 'VBP']
             tokens = [t.lower() for t in word_tokenize(text) if t.isalpha() and t not in self.stopwords]
             tagged_text = pos_tag(tokens)
-            joined = " ".join([word[0] for word in tagged_text if word[1] in selected])
+            # joined = " ".join([word[0] for word in tagged_text if word[1] in selected])
             return set([word[0] for word in tagged_text if word[1] in selected])
 
         return _tagged_filter(_stem_filter(text)) if stem else _tagged_filter(text)

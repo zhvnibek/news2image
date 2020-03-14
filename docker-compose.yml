@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  postgres:
+    restart: always
+    image: postgres
+    environment:
+      POSTGRES_USER: zh
+      POSTGRES_PASSWORD: pwd
+      POSTGRES_DB: news2image
+    volumes:
+      - "/opt/docker-data/news2image/pg-data:/var/lib/postgresql/data"
+    ports:
+      - "5732:5432"
+    hostname: postgres

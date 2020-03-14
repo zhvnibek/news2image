@@ -42,8 +42,8 @@ if __name__ == '__main__':
     sys.path.append(os.path.join(sys.path[0], 'captioning'))  # add models.py
 
     t_keyed_vectors = KeyedVectors.load_word2vec_format(fname=Word2VecConfig.get_word_vectors_filename(),
-                                                      limit=Word2VecConfig.get_vocab_size(),
-                                                      binary=True)
+                                                        limit=Word2VecConfig.get_vocab_size(),
+                                                        binary=True)
     t_space = Space(t_keyed_vectors)
     image_encoder = ImageEncoder(space=t_space)
     t_img = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/images/goi5k/7295416642_23dba7f0c7_o.jpg"
