@@ -2,7 +2,7 @@ import os
 import cv2
 import math
 from typing import Optional
-from src.config import ImageConfig
+from src.config import ImageConfig, PostProcessingConfig
 
 
 # Code from https://note.nkmk.me/en/python-opencv-hconcat-vconcat-np-tile/
@@ -20,7 +20,7 @@ def stack_vertical(im_list, interpolation=cv2.INTER_CUBIC):
     return cv2.vconcat(im_list_resize)
 
 
-def stack_grid(image_ids: list) -> Optional[str]:
+def stack_grid(image_ids: list, countries: list) -> Optional[str]:
 
     def _get_dims(count: int) -> tuple:
         _cols = math.ceil(math.sqrt(count))
@@ -31,6 +31,8 @@ def stack_grid(image_ids: list) -> Optional[str]:
         return None
 
     image_full_filenames = [os.path.join(ImageConfig.get_images_folder(), f'{_id}.jpg') for _id in image_ids]
+    image_full_filenames.extend(countries)
+    print(image_full_filenames)
     cols, rows = _get_dims(len(image_full_filenames))
     v_list = []
     for row in range(rows):
@@ -46,14 +48,16 @@ def stack_grid(image_ids: list) -> Optional[str]:
     return img_loc
 
 
-def make_collage(image_ids: list) -> str:
+def make_collage(image_ids: list, countries: list) -> str:
     default = 'temp/collage/default.png'
-    collage = stack_grid(image_ids=image_ids)
+    collage = stack_grid(image_ids=image_ids, countries=countries)
     return collage if collage is not None else default
 
 
 if __name__ == '__main__':
     img_ids = [img.split('.')[0] for img in os.listdir(ImageConfig.get_images_folder())]
     test_img_ids = img_ids[11:15]
-    collage_loc: str = make_collage(image_ids=test_img_ids)
+    # cnts = []
+    cnts = ["/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/countries/flags_png/Flag_of_Russia.png", "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/countries/flags_png/Flag_of_China.png"]
+    collage_loc: str = make_collage(image_ids=test_img_ids, countries=cnts)
     print(collage_loc)

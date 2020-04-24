@@ -61,7 +61,7 @@ class CaptionerConfig:
 
 class Word2VecConfig:
     _w2v_file = '~/Downloads/GoogleNews-vectors-negative300.bin.gz'
-    _vocab_size = 200000
+    _vocab_size = 20000
     _vocab_max_size = 3000000
 
     @staticmethod
@@ -76,3 +76,18 @@ class Word2VecConfig:
     def set_vocab_size(size: int) -> None:
         if Word2VecConfig._vocab_max_size > size > 10000:
             Word2VecConfig._vocab_size = size
+
+
+class PostProcessingConfig:
+    _country_flags_folder = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/countries/flags_png/"
+    _country_names_txt = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/countries/countries.txt"
+
+    @staticmethod
+    def get_country_names() -> set:
+        with open(file=PostProcessingConfig._country_names_txt, mode='r') as f:
+            c = f.read()
+        return set(c.split('\n'))
+
+    @staticmethod
+    def get_flags_folder() -> str:
+        return PostProcessingConfig._country_flags_folder

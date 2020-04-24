@@ -4,7 +4,7 @@ from gensim.models import KeyedVectors
 from src.text.summarizer import NewsSummarizer
 from src.image.encoder import ImageEncoder
 from src.recommender import Recommender, Space
-from src.config import Word2VecConfig, ImageConfig
+from src.config import Word2VecConfig, ImageConfig, PostProcessingConfig
 from src.tg_bot.merger import make_collage
 
 import sys
@@ -24,24 +24,39 @@ class Resolver:
         keyed_vectors = KeyedVectors.load_word2vec_format(fname=Word2VecConfig.get_word_vectors_filename(),
                                                           limit=Word2VecConfig.get_vocab_size(),
                                                           binary=True)
-        space = Space(keyed_vectors)
+        space = Space(keyed_vectors=keyed_vectors)
         self.recommender = Recommender(space=space)
         self.recommender.set_image_subspaces(path=ImageConfig.get_image_subspaces_folder())
         self.summarizer = NewsSummarizer()
         self.image_encoder = ImageEncoder(space=space)
         self.images_folder = ImageConfig.get_images_folder()
 
+    @staticmethod
+    def get_country_flag_locs(countries: set) -> list:
+        """Returns location of the image file"""
+        selected_flags = []
+        for flag in os.listdir(PostProcessingConfig.get_flags_folder()):
+            for country in countries:
+                if country.capitalize() in flag:
+                    selected_flags.append(os.path.join(PostProcessingConfig.get_flags_folder(), flag))
+        return selected_flags
+
     def resolve(self, text: str, params=None) -> Response:
-        formatted_summary: str = f"Summary:\n{self.summarizer.generate_summary(text=text)}"
-        formatted_keywords: str = f'Keywords:\n{", ".join(set(self.summarizer.get_keywords(text=text))) }'
+        formatted_summary: str = f"*Summary:*\n_{self.summarizer.generate_summary(text=text)}_"
+        keywords = set(self.summarizer.get_keywords(text=text))
+        countries_set: set = PostProcessingConfig.get_country_names()
+        countries_set.intersection_update(keywords)
+        print(f'Countries: {countries_set}')
+        formatted_keywords: str = f'*Keywords:*\n_{", ".join(keywords)}_'
         images_rec: list = self.recommender.predict(text=text, count=4)
         _ids = [img[0] for img in images_rec]
         print(f'Selected image IDs: {_ids}')
-        collage_loc = make_collage(image_ids=_ids)
+        countries: list = Resolver.get_country_flag_locs(countries=countries_set)
+        collage_loc = make_collage(image_ids=_ids, countries=countries)
         data: dict = self._get_image_captions_and_keywords(image_ids=_ids)
         captions = ""
         for k, v in data.items():
-            captions += f"Image #{k+1}:\n\tCaption: {v.get('caption')}\n\tKeywords #{k+1}: {', '.join(v.get('keywords', []))}\n\n"
+            captions += f"Image #{k+1}:\n*Сaption:* _{v.get('caption')}_\n*Keywords:* _{', '.join(v.get('keywords', []))}_\n\n"
         return Response(
             summary=formatted_summary,
             keywords=formatted_keywords,
@@ -82,3 +97,5 @@ if __name__ == '__main__':
     They met to discuss how to respond to falling demand caused by the growing spread of the coronavirus."""
     r: Response = resolver.resolve(text=t_txt)
     pprint(r)
+    # fl = Resolver.get_country_flag_locs({"China", "Russia"})
+    # print(fl)

@@ -5,7 +5,7 @@ from nltk.cluster.util import cosine_distance
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize, sent_tokenize, wordpunct_tokenize
 from collections import Counter
-from src.config import StopWordsConfig
+from src.config import StopWordsConfig, PostProcessingConfig
 
 
 class Summarizer:
@@ -113,12 +113,15 @@ class NewsSummarizer(Summarizer):
         # print(f'summarizer. words count for all tokens:  {counter}')
         whole_counter = Counter({k: counter[k] for k in _keywords})
         # print(f'summarizer. words count for keywords:  {whole_counter}')
-        return Counter(dict(whole_counter.most_common(keyword_limit)))
+        countries_set: set = PostProcessingConfig.get_country_names()
+        countries_set.intersection_update(set(counter))
+        countries_dict = Counter(countries_set)
+        return Counter(dict(whole_counter.most_common(keyword_limit), **countries_dict))
 
 
 if __name__ == '__main__':
     full_text = \
-        "Shocking CCTV footage released by Manchester police shows \
+        "China. Shocking CCTV footage released by Manchester police shows \
     the moment the man wielding a large-bladed knife is tackled \
     to the ground by armed officers. \
     At about 11 pm on Tuesday, CCTV operators spotted a man \

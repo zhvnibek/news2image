@@ -1,12 +1,11 @@
 import os
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from src.tg_bot import bot_config
+from src.tg_bot.bot_config import parse_mode, updater, logger
 from src.tg_bot.resolver import Resolver, Response
 
-# bot = bot_config.bot
-updater = bot_config.updater
-logger = bot_config.logger
+updater = updater
+logger = logger
 
 
 def start(update, context):
@@ -23,13 +22,13 @@ def start(update, context):
 
 
 def process(update, context):
-    logger.info(f'Processing text from {update.effective_chat.id}: {update.message.text[:20]}')
+    logger.info(f'Processing text from {update.effective_chat.id}: {update.message.text[:20]}...')
     params = None
     chat_id = update.effective_chat.id
     response: Response = resolver.resolve(text=update.message.text, params=params)
-    context.bot.send_message(chat_id=chat_id, text=response.get('summary'))
-    context.bot.send_message(chat_id=chat_id, text=response.get('keywords'))
-    context.bot.send_message(chat_id=chat_id, text=response.get('captions'))
+    context.bot.send_message(chat_id=chat_id, text=response.get('summary'), parse_mode=parse_mode)
+    context.bot.send_message(chat_id=chat_id, text=response.get('keywords'), parse_mode=parse_mode)
+    context.bot.send_message(chat_id=chat_id, text=response.get('captions'), parse_mode=parse_mode)
     collage_loc = response.get('collage_loc')
     try:
         photo = open(file=collage_loc, mode='rb')
