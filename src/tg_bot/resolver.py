@@ -8,7 +8,7 @@ from src.config import Word2VecConfig, ImageConfig, PostProcessingConfig
 from src.tg_bot.merger import make_collage
 
 import sys
-sys.path.append("/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/src/image/captioning")  # add models.py
+sys.path.append("/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/src/image/captioning")  # add models.py
 
 
 class Response(TypedDict):

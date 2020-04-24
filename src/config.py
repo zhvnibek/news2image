@@ -11,7 +11,7 @@ def get_logger(name: str):
 
 
 class StopWordsConfig:
-    _stopwords_file = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/src/text/utils/stopwords.txt"
+    _stopwords_file = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/src/text/utils/stopwords.txt"
     _stopwords = set(stopwords.words('english'))
 
     @staticmethod
@@ -24,7 +24,7 @@ class StopWordsConfig:
 
 
 class TextConfig:
-    _texts_folder = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/texts"
+    _texts_folder = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/texts"
     _texts_subspaces_folder = None
 
     @staticmethod
@@ -41,8 +41,8 @@ class TextConfig:
 
 
 class ImageConfig:
-    _images_folder = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/images/goi5k"
-    _image_subspaces_folder = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/subspaces/goi5k"
+    _images_folder = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/images/goi5k"
+    _image_subspaces_folder = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/subspaces/goi5k"
 
     @staticmethod
     def get_images_folder() -> str:
@@ -54,8 +54,8 @@ class ImageConfig:
 
 
 class CaptionerConfig:
-    checkpoint_path = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar"
-    word_map_path = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json"
+    checkpoint_path = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar"
+    word_map_path = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -79,8 +79,8 @@ class Word2VecConfig:
 
 
 class PostProcessingConfig:
-    _country_flags_folder = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/countries/flags_png/"
-    _country_names_txt = "/home/zhanibek/Desktop/Fall '19/Senior Project/news2image/data/countries/countries.txt"
+    _country_flags_folder = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/countries/flags_png"
+    _country_names_txt = "/home/zhanibek/Desktop/Spring20/Senior Project II/news2image/data/countries/countries.txt"
 
     @staticmethod
     def get_country_names() -> set:
