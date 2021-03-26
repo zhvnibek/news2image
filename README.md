@@ -5,4 +5,4 @@
 ## Authors
 * **Zhanibek Darimbekov** - *Computer Science, Nazarbayev University* - [GitHub](https://github.com/zhvnibek)
 * **Aslan Ubingazhibov** - *Computer Science, Nazarbayev University* - [GitHub](https://github.com/Ubinazhip)
-* **Zarina Serikbulatova** - *Computer Science, Nazarbayev University*
+* **Zarina Serikbulatova** - *Computer Science, Nazarbayev University* - [GitHub](https://github.com/pchelkas)
